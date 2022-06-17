@@ -1,8 +1,8 @@
 {
-  "name": "yz-nice-tools",
+  "name": "media-cut",
   "version": "1.0.3",
   "private": false,
-  "main": "dist/yz-nice-tools.umd.min.js",
+  "main": "dist/media-cut.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

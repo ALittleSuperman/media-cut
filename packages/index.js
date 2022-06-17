@@ -1,6 +1,5 @@
 
 const components = [
-  OpenInDefaultBrowser
 ]
 
 const install = (Vue) => {
