@@ -10,9 +10,7 @@
     "lib": "vue-cli-service build --target lib packages/index.js"
   },
   "dependencies": {
-    "amfe-flexible": "^2.2.1",
     "core-js": "^3.8.3",
-    "postcss-pxtorem": "5.1.1",
     "reset-css": "^5.0.1",
     "vue": "^2.6.14"
   },
@@ -30,6 +28,9 @@
     "eslint-plugin-vue": "^8.0.3",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
+    "scss": "^0.2.4",
+    "video.js": "^7.19.2",
+    "vue-router": "^3.5.2",
     "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {
