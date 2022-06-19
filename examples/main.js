@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import 'amfe-flexible'
 import 'reset-css'
 import router from './router/index'
 import Components from '../packages/index'
