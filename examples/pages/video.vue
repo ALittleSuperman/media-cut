@@ -154,6 +154,7 @@ export default {
         console.log(this.CContainer.clientWidth + e.clientX - this.clientX, '计算过后的元素的宽度')
         const num = Math.max(this.minWidth, this.CContainer.clientWidth + e.clientX - this.clientX)
         this.CContainer.style.width = num > this.maxWidth ? this.maxWidth + 'px' : num + 'px'
+        this.clientX = e.clientX
       } else if (this.direc.includes('right')) {
         console.log(123)
       }
