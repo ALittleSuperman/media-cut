@@ -19,6 +19,7 @@ export default {
       document.querySelector('body').addEventListener('mousemove', this.move)
     },
     move (e) {
+      // console.log(e.target)
       const isMask = e.target.className.includes('mask')
       if (isMask) {
         this.setLineWidth(e.target, e.offsetX)
@@ -26,12 +27,14 @@ export default {
       }
     },
     setLineWidth (mask, offsetX) {
-      const top = mask.querySelector('.top')
+      const top = mask.parentElement.querySelector('.top')
       top.style.width = offsetX * 196 / 200 + 'px'
     },
     setMaskBG (mask, offsetX) {
       const width = -(Math.floor(offsetX / (200 / 30)) * 200) + 'px'
-      mask.style.backgroundPositionX = width
+      // mask.style.backgroundPositionX = width
+      const dom = mask.parentElement.querySelector('.imgs')
+      dom.style.left = width
     }
   }
 }

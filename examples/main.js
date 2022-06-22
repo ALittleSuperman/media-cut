@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import 'reset-css'
+import './index.css'
 import router from './router/index'
 import Components from '../packages/index'
 import videojs from 'video.js'
