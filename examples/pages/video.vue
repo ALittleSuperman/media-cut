@@ -43,11 +43,9 @@ export default {
       endTime: 0, // 视频的播放结束时间
       time: 7, // 视频的播放时长
       target: null, // 鼠标按下的位置
-      minWidth: 213,
-      clientWidth: 0,
-      clientX: 0,
-      initWidth: 0,
-      initLeft: 0
+      minWidth: 213, // 最小宽度
+      initX: 0, // 鼠标点击时初始位置
+      speed: 1 // 帧图移动速度
     }
   },
   methods: {
@@ -109,49 +107,150 @@ export default {
      */
     move (event) {
       const target = document.querySelector('.view')
-      const container = document.querySelector('.container')
-      if (this.target === 1) {
-        // 点击左边控制器
-        const client = event.clientX - this.clientX
-        if (client >= 0) {
-          // 向右拖拽
-          if (this.initWidth > 213) {
-            const width = this.initWidth - (event.clientX - this.clientX)
-            target.style.width = width + 'px'
-            const left = this.initLeft + (event.clientX - this.clientX)
-            container.style.left = left + 'px'
-          }
-        }
-      } else if (this.target === 2) {
-        // 点击右边的控制器
-        const client = event.clientX - this.clientX
-        if (client >= 0) {
-          // 如果向右拖动
-          if (target.clientWidth < 426 && target.clientWidth >= 213) {
-            // 向右拖动时宽度未到达最大值，更改宽度
-            const n = event.clientX - this.clientX + this.initWidth
-            const width = Math.min(426, n) < 213 ? 213 : Math.min(426, n)
-            if (width === 426) {
-              // 已经到达最大值更新鼠标初始化位置
-              this.clientX = event.clientX
-              this.initWidth = 426
-            }
-            target.style.width = width + 'px'
+      if (this.target === 2) {
+        if (this.judgeDirection(event)) {
+          if (target.clientWidth < 426) {
+            this.rightControlToRightWidth(event)
           }
         } else {
-          // 如果向左拖动
-          if (target.clientWidth <= 426 && target.clientWidth > 213) {
-            // 向左拖动未到达最小值，更新宽度
-            const n = this.initWidth - Math.abs(client)
-            const width = Math.max(213, n) === 213 ? 213 : Math.max(213, n)
-            if (width === 213) {
-              // 如果已经到达最小值，更新鼠标位置
-              this.clientX = event.clientX
-              this.initWidth = 213
-            }
-            target.style.width = width + 'px'
+          if (target.clientWidth > 213) {
+            this.rightControlToLeftWidth(event)
+          } else {
+            this.rightControlToLeftLeft(event)
           }
         }
+      } else if (this.target === 1) {
+        if (this.judgeDirection(event)) {
+          if (target.clientWidth > 213) {
+            this.leftControlToRightWidth(event)
+          } else {
+            this.leftControlToRightLeft(event)
+          }
+        } else {
+          if (target.clientWidth < 426) {
+            this.leftControlToLeftWidth(event)
+          }
+        }
+      } else if (this.target === 3) {
+        if (this.judgeDirection(event)) {
+          this.leftControlToRightLeft(event)
+        } else {
+          this.leftControlToRightLeft(event)
+        }
+      }
+    },
+    /**
+     * 右侧控制器向右宽度改变
+     * @param e
+     */
+    rightControlToRightWidth (event) {
+      const target = document.querySelector('.view')
+      const width = target.clientWidth + (event.clientX - this.initX)
+      target.style.width = width > 426 ? 426 : width + 'px'
+      this.initX = event.clientX
+    },
+    /**
+     * 右侧控制器向左宽度改变
+     * @param e
+     */
+    rightControlToLeftWidth (event) {
+      const target = document.querySelector('.view')
+      const width = target.clientWidth + (event.clientX - this.initX)
+      target.style.width = width < 213 ? 213 : width + 'px'
+      this.initX = event.clientX
+    },
+    /**
+     * 右侧控制器向左偏移度改变
+     * @param event
+     */
+    rightControlToLeftLeft (event) {
+      const target = document.querySelector('.container')
+      if (target.offsetLeft === 0) return
+      const left = target.offsetLeft - Math.abs(event.clientX - this.initX)
+      target.style.left = left <= 0 ? 0 : left + 'px'
+      this.initX = event.clientX
+    },
+    /**
+     * 左侧控制器宽度向右改变
+     * @param e
+     */
+    leftControlToRightWidth (event) {
+      const target = document.querySelector('.view')
+      const width = target.clientWidth - (event.clientX - this.initX)
+      target.style.width = width <= 213 ? 213 : width + 'px'
+      this.leftControlToRightLeft(event)
+    },
+    /**
+     * 左侧控制器向左宽度改变
+     * @param e
+     */
+    leftControlToLeftWidth (event) {
+      const target = document.querySelector('.view')
+      const width = target.clientWidth + Math.abs(event.clientX - this.initX)
+      target.style.width = width >= 426 ? 426 : width + 'px'
+      if (width >= 426) return
+      this.leftControlToRightLeft(event)
+    },
+    /**
+     * 左侧控制器偏移度改变
+     * @param e
+     */
+    leftControlToRightLeft (event) {
+      const container = document.querySelector('.container')
+      const wrapper = document.querySelector('.fpsGroup')
+      const control = document.querySelector('.left')
+      const maxLeft = wrapper.clientWidth - container.clientWidth + (control.clientWidth * 2)
+      const left = container.offsetLeft + (event.clientX - this.initX)
+      if (left <= 0) {
+        container.style.left = 0 + 'px'
+        this.initX = event.clientX
+      } else if (left >= maxLeft) {
+        container.style.left = maxLeft + 'px'
+        this.initX = event.clientX
+      } else {
+        container.style.left = left + 'px'
+        this.initX = event.clientX
+      }
+    },
+    /**
+     * 判断方向
+     * @param e
+     * 向右为true 向左为false
+     * @return Boolean
+     */
+    judgeDirection (e) {
+      return e.clientX - this.initX > 0
+    },
+    /**
+     * 移动帧图偏移度
+     * @param event
+     */
+    moveImages (event) {
+      const container = document.querySelector('.group')
+      const target = document.querySelector('.container')
+      if (this.speed < 5) {
+        setTimeout(() => {
+          if (this.judgeDirection(event)) {
+            const long = container.offsetLeft + 1
+            const max = container.clientWidth - target.clientWidth
+            container.style.left = long >= max ? max : long + 'px'
+          } else {
+            const long = container.offsetLeft - 1
+            container.style.left = long <= 0 ? 0 : long + 'px'
+          }
+        }, 300)
+      } else {
+        setTimeout(() => {
+          if (this.judgeDirection(event)) {
+            const long = container.offsetLeft - 1
+            const max = container.clientWidth - target.clientWidth
+            console.log(long, max)
+            container.style.left = Math.abs(long) >= max ? -max : long + 'px'
+          } else {
+            const long = container.offsetLeft + 1
+            container.style.left = long <= 0 ? 0 : long + 'px'
+          }
+        }, 100)
       }
     },
     /**
@@ -159,26 +258,19 @@ export default {
      * @param e
      */
     down (e) {
-      const container = document.querySelector('.container')
-      const target = document.querySelector('.view')
-      this.clientX = e.clientX
-      this.initWidth = target.getBoundingClientRect().width
-      this.initLeft = container.offsetLeft
+      this.initX = e.clientX
       if (e.target.className.includes('left')) {
         this.target = 1
       } else if (e.target.className.includes('right')) {
         this.target = 2
+      } else if (e.target.className.includes('view')) {
+        this.target = 3
       }
     },
     /**
      * 鼠标提起时
      */
-    up (e) {
-      const container = document.querySelector('.container')
-      const target = document.querySelector('.view')
-      this.clientX = e.clientX
-      this.initWidth = target.getBoundingClientRect().width
-      this.initLeft = container.offsetLeft
+    up () {
       this.target = null
     }
   }
@@ -235,6 +327,8 @@ export default {
         position: relative;
         width: 1065px;
         .group {
+          position: absolute;
+          z-index: 1;
           display: flex;
           height: 120px;
           .imagesFps {
