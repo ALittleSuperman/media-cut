@@ -226,31 +226,16 @@ export default {
      * @param event
      */
     moveImages (event) {
+      console.log(event)
       const container = document.querySelector('.group')
       const target = document.querySelector('.container')
-      if (this.speed < 5) {
-        setTimeout(() => {
-          if (this.judgeDirection(event)) {
-            const long = container.offsetLeft + 1
-            const max = container.clientWidth - target.clientWidth
-            container.style.left = long >= max ? max : long + 'px'
-          } else {
-            const long = container.offsetLeft - 1
-            container.style.left = long <= 0 ? 0 : long + 'px'
-          }
-        }, 300)
+      if (this.judgeDirection(event)) {
+        const long = container.offsetLeft + 1
+        const max = container.clientWidth - target.clientWidth
+        container.style.left = long >= max ? max : long + 'px'
       } else {
-        setTimeout(() => {
-          if (this.judgeDirection(event)) {
-            const long = container.offsetLeft - 1
-            const max = container.clientWidth - target.clientWidth
-            console.log(long, max)
-            container.style.left = Math.abs(long) >= max ? -max : long + 'px'
-          } else {
-            const long = container.offsetLeft + 1
-            container.style.left = long <= 0 ? 0 : long + 'px'
-          }
-        }, 100)
+        const long = container.offsetLeft - 1
+        container.style.left = long <= 0 ? 0 : long + 'px'
       }
     },
     /**
