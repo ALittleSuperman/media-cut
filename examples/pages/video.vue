@@ -5,22 +5,7 @@
       <video id="videoPlayer" class="video-js"/>
     </div>
     <div class="media-cut">
-      <div class="fpsGroup">
-        <div class="container">
-          <div class="resize left">
-            <i></i>
-            <i></i>
-          </div>
-          <div class="view"></div>
-          <div class="resize right">
-            <i></i>
-            <i></i>
-          </div>
-        </div>
-        <div class="group">
-          <img class="imagesFps" v-for="item in 47" width="200px" :key="item" :src="getImg(item)" draggable="false">
-        </div>
-      </div>
+      <MediaCut :fps="fps" />
     </div>
   </div>
 </div>
@@ -28,24 +13,20 @@
 <script>
 export default {
   name: 'videoPage',
-  mounted () {
-    this.initPlay()
-    this.initEvent()
-  },
   destroyed () {
     this.player.dispose()
   },
   data () {
+    const fps = new Array(30).fill('').map((item, index) => {
+      return this.getImg(index + 1)
+    })
     return {
       player: null, // video.js实例
       duration: 0, // 视频的总时长
       starTime: 0, // 视频的播放开始时间
       endTime: 0, // 视频的播放结束时间
       time: 7, // 视频的播放时长
-      target: null, // 鼠标按下的位置
-      minWidth: 213, // 最小宽度
-      initX: 0, // 鼠标点击时初始位置
-      speed: 1 // 帧图移动速度
+      fps // 视频的帧率数组
     }
   },
   methods: {
@@ -96,167 +77,6 @@ export default {
           }
         })
       })
-    },
-    initEvent () {
-      document.querySelector('body').addEventListener('mousemove', this.move)
-      document.querySelector('.container').addEventListener('mousedown', this.down)
-      document.querySelector('body').addEventListener('mouseup', this.up)
-    },
-    /**
-     * body代理鼠标滑动实践
-     */
-    move (event) {
-      const target = document.querySelector('.view')
-      if (this.target === 2) {
-        if (this.judgeDirection(event)) {
-          if (target.clientWidth < 426) {
-            this.rightControlToRightWidth(event)
-          }
-        } else {
-          if (target.clientWidth > 213) {
-            this.rightControlToLeftWidth(event)
-          } else {
-            this.rightControlToLeftLeft(event)
-          }
-        }
-      } else if (this.target === 1) {
-        if (this.judgeDirection(event)) {
-          if (target.clientWidth > 213) {
-            this.leftControlToRightWidth(event)
-          } else {
-            this.leftControlToRightLeft(event)
-          }
-        } else {
-          if (target.clientWidth < 426) {
-            this.leftControlToLeftWidth(event)
-          }
-        }
-      } else if (this.target === 3) {
-        if (this.judgeDirection(event)) {
-          this.leftControlToRightLeft(event)
-        } else {
-          this.leftControlToRightLeft(event)
-        }
-      }
-    },
-    /**
-     * 右侧控制器向右宽度改变
-     * @param e
-     */
-    rightControlToRightWidth (event) {
-      const target = document.querySelector('.view')
-      const width = target.clientWidth + (event.clientX - this.initX)
-      target.style.width = width > 426 ? 426 : width + 'px'
-      this.initX = event.clientX
-    },
-    /**
-     * 右侧控制器向左宽度改变
-     * @param e
-     */
-    rightControlToLeftWidth (event) {
-      const target = document.querySelector('.view')
-      const width = target.clientWidth + (event.clientX - this.initX)
-      target.style.width = width < 213 ? 213 : width + 'px'
-      this.initX = event.clientX
-    },
-    /**
-     * 右侧控制器向左偏移度改变
-     * @param event
-     */
-    rightControlToLeftLeft (event) {
-      const target = document.querySelector('.container')
-      if (target.offsetLeft === 0) return
-      const left = target.offsetLeft - Math.abs(event.clientX - this.initX)
-      target.style.left = left <= 0 ? 0 : left + 'px'
-      this.initX = event.clientX
-    },
-    /**
-     * 左侧控制器宽度向右改变
-     * @param e
-     */
-    leftControlToRightWidth (event) {
-      const target = document.querySelector('.view')
-      const width = target.clientWidth - (event.clientX - this.initX)
-      target.style.width = width <= 213 ? 213 : width + 'px'
-      this.leftControlToRightLeft(event)
-    },
-    /**
-     * 左侧控制器向左宽度改变
-     * @param e
-     */
-    leftControlToLeftWidth (event) {
-      const target = document.querySelector('.view')
-      const width = target.clientWidth + Math.abs(event.clientX - this.initX)
-      target.style.width = width >= 426 ? 426 : width + 'px'
-      if (width >= 426) return
-      this.leftControlToRightLeft(event)
-    },
-    /**
-     * 左侧控制器偏移度改变
-     * @param e
-     */
-    leftControlToRightLeft (event) {
-      const container = document.querySelector('.container')
-      const wrapper = document.querySelector('.fpsGroup')
-      const control = document.querySelector('.left')
-      const maxLeft = wrapper.clientWidth - container.clientWidth + (control.clientWidth * 2)
-      const left = container.offsetLeft + (event.clientX - this.initX)
-      if (left <= 0) {
-        container.style.left = 0 + 'px'
-        this.initX = event.clientX
-      } else if (left >= maxLeft) {
-        container.style.left = maxLeft + 'px'
-        this.initX = event.clientX
-      } else {
-        container.style.left = left + 'px'
-        this.initX = event.clientX
-      }
-    },
-    /**
-     * 判断方向
-     * @param e
-     * 向右为true 向左为false
-     * @return Boolean
-     */
-    judgeDirection (e) {
-      return e.clientX - this.initX > 0
-    },
-    /**
-     * 移动帧图偏移度
-     * @param event
-     */
-    moveImages (event) {
-      console.log(event)
-      const container = document.querySelector('.group')
-      const target = document.querySelector('.container')
-      if (this.judgeDirection(event)) {
-        const long = container.offsetLeft + 1
-        const max = container.clientWidth - target.clientWidth
-        container.style.left = long >= max ? max : long + 'px'
-      } else {
-        const long = container.offsetLeft - 1
-        container.style.left = long <= 0 ? 0 : long + 'px'
-      }
-    },
-    /**
-     * 鼠标按下
-     * @param e
-     */
-    down (e) {
-      this.initX = e.clientX
-      if (e.target.className.includes('left')) {
-        this.target = 1
-      } else if (e.target.className.includes('right')) {
-        this.target = 2
-      } else if (e.target.className.includes('view')) {
-        this.target = 3
-      }
-    },
-    /**
-     * 鼠标提起时
-     */
-    up () {
-      this.target = null
     }
   }
 }
@@ -265,6 +85,7 @@ export default {
 #wapper {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
   .main {
     width: 1065px;
@@ -300,7 +121,7 @@ export default {
     }
     .media-cut {
       width: 100%;
-      height: 150px;
+      height: 60px;
       box-sizing: border-box;
       margin-top: 20px;
       .control {

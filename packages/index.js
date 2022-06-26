@@ -1,5 +1,6 @@
-
+import MediaCut from './cut'
 const components = [
+  MediaCut
 ]
 
 const install = (Vue) => {
