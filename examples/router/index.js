@@ -1,6 +1,6 @@
 import VueRouter from 'vue-router'
 import Vue from 'vue'
-import Video from '../pages/video'
+import Video from '../pages/video.vue'
 import Preview from '../pages/preview'
 Vue.use(VueRouter)
 const routes = [

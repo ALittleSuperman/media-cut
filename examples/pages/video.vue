@@ -5,57 +5,53 @@
       <video id="videoPlayer" class="video-js"/>
     </div>
     <div class="media-cut">
-      <MediaCut :fps="fps" />
+      <MediaCut :pictrue="pictrue" :fpsTime="fps" :getUrl="getUrl" :duration="duration"/>
     </div>
   </div>
 </div>
 </template>
 <script>
+import { getUrl } from './video'
+import videojs from 'video.js'
+import 'video.js/dist/video-js.css'
 export default {
   name: 'videoPage',
   destroyed () {
     this.player.dispose()
   },
   data () {
-    const fps = new Array(30).fill('').map((item, index) => {
-      return this.getImg(index + 1)
-    })
+    const fps = []
+    for (let i = 0; i <= 334240; i++) {
+      if (i % 1500 === 0) {
+        fps.push(i)
+      }
+    }
     return {
       player: null, // video.js实例
-      duration: 0, // 视频的总时长
+      duration: 334240, // 视频的总时长
       starTime: 0, // 视频的播放开始时间
       endTime: 0, // 视频的播放结束时间
       time: 7, // 视频的播放时长
-      fps // 视频的帧率数组
+      fps, // 视频的帧率数组
+      pictrue: 'http://testalcdn.miaopai.com/stream/of9fY5BtGMUX7apR8B1nhAw-QIX7FHMv-zCzSw__.mp4',
+      getUrl
     }
   },
+  mounted () {
+    this.initPlay()
+  },
   methods: {
-    /**
-     * 渲染帧图
-     * @param key
-     * @returns {*}
-     */
-    getImg (key) {
-      return require(`../assets/${key}.png`)
-    },
     /**
      * 初始化videojs
      */
     initPlay () {
-      this.player = this.$videojs(document.querySelector('#videoPlayer'), {
-        controls: true,
+      this.player = videojs(document.querySelector('#videoPlayer'), {
+        controls: true, // 是否显示控制条
+        preload: 'auto',
         autoplay: false,
-        preload: 'metadata',
-        controlBar: {
-          fullscreenToggle: false, // 全屏展示关闭
-          volumePanel: false, // 音量关闭
-          playToggle: false, // 播放暂停按钮关闭
-          progressControl: false, // 关闭进度条
-          remainingTimeDisplay: false, // 播放时长关闭
-          pictureInPictureToggle: false // 隐藏画中画按钮
-        },
+        language: 'zh-CN', // 设置语言
         sources: [{
-          src: 'https://blog-1301169927.cos.ap-beijing.myqcloud.com/oceans.mp4',
+          src: 'http://trans-test.oss-cn-beijing-internal.aliyuncs.com/stream/of9fY5BtGMUX7apR8B1nhAw-QIX7FHMv-zCzSw__.mp4?ssig=ca6c0569e80e79de5a67daa3b83428c0&time_stamp=1656848338630',
           type: 'video/mp4'
         }]
       }, () => {
@@ -108,15 +104,6 @@ export default {
         height: 2em;
         border-radius: 50%;
         transform: translate(-50%, -50%);
-      }
-      .video-js .vjs-big-play-button .vjs-icon-placeholder:before {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .vjs-paused .vjs-big-play-button,
-      .vjs-paused.vjs-has-started .vjs-big-play-button {
-        display: block !important;
       }
     }
     .media-cut {

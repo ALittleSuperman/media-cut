@@ -1,8 +1,8 @@
 <template>
   <div class="media_cut_container" ref="container">
     <div class="fpsControlContainer">
-      <div class="fpsImgGroup">
-        <img v-for="item in fps" :src="item" :key="item" class="fpsImg" />
+      <div class="fpsImgGroup" ref="fps">
+        <img v-for="item in fpsTime" :src="getUrl(pictrue, item)" :key="item" class="fpsImg" :width="imgWidth" />
       </div>
     </div>
     <div class="controlContainer" ref="controlContainer">
@@ -20,14 +20,28 @@
 export default {
   name: 'MediaCut',
   props: {
-    fps: {
+    fpsTime: {
       type: Array,
       default: () => []
+    },
+    pictrue: {
+      type: String,
+      default: ''
+    },
+    getUrl: {
+      type: Function,
+      default: () => {}
+    },
+    duration: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
+      imgWidth: 0,
       maxWidth: 0, // 截帧容器的最大宽度
+      minWidth: 0, // 截帧容器的最大宽度
       initMouseX: 0, // 鼠标点击时的X坐标
       target: null, // 移动的目标元素
       initViewWidth: 0, // 截帧容器的初始宽度
@@ -37,10 +51,25 @@ export default {
     }
   },
   mounted () {
-    this.maxWidth = this.$refs.container.offsetWidth / 2
+    this.imgWidthCalc()
+    const d = Math.floor(this.duration / 1000) > 60
+    if (d) {
+      this.maxWidth = this.$refs.container.offsetWidth / 2
+    } else {
+      this.maxWidth = this.$refs.container.offsetWidth
+    }
     this.initEvent()
   },
   methods: {
+    imgWidthCalc () {
+      const d = Math.floor(this.duration / 1000) > 60
+      if (d) {
+        this.imgWidth = this.$refs.container.offsetWidth / 30
+        this.minWidth = Math.floor(this.imgWidth * 0.66)
+      } else {
+        this.imgWidth = this.$refs.container.offsetWidth / Math.floor(this.duration / 1000)
+      }
+    },
     /**
      * 初始化事件
      */
@@ -58,12 +87,10 @@ export default {
         this.initMouseX = e.clientX
         this.initViewWidth = this.$refs.view.offsetWidth
         this.initContainerLeft = this.$refs.controlContainer.offsetLeft
-        this.maxLeft = this.$refs.container.offsetWidth - (this.$refs.controlContainer.offsetWidth)
       })
       document.querySelector('#view').addEventListener('mousedown', (e) => {
         this.target = 3
         this.initMouseX = e.clientX
-        this.initViewWidth = this.$refs.view.offsetWidth
         this.initContainerLeft = this.$refs.controlContainer.offsetLeft
         this.maxLeft = this.$refs.container.offsetWidth - (this.$refs.controlContainer.offsetWidth)
       })
@@ -77,7 +104,12 @@ export default {
      */
     mousemove (event) {
       if (this.target === 1) {
+        this.changeControlLeft(event)
         this.handleLeft(event)
+      } else if (this.target === 2) {
+        this.handleRight(event)
+      } else if (this.target === 3) {
+        this.handleView(event)
       }
     },
     direction (event) {
@@ -87,24 +119,46 @@ export default {
      * 点击左边控制器
      */
     handleLeft (event) {
-      const poor = event.clientX - this.initMouseX
-      this.changeControlLeft(event)
-      if (this.direction(event)) {
-        if (this.initViewWidth - poor > 100) {
-          this.$refs.view.style.width = `${this.initViewWidth - poor}px`
-        }
-      } else {
-        if (this.initViewWidth + Math.abs(poor) > this.maxWidth || this.initContainerLeft === 0) return
-        this.$refs.view.style.width = `${this.initViewWidth + Math.abs(poor)}px`
-      }
+      if (this.$refs.controlContainer.offsetLeft === 0) return
+      const poor = this.initViewWidth - (event.clientX - this.initMouseX)
+      const width = poor > this.maxWidth ? this.maxWidth : poor < this.minWidth ? this.minWidth : poor
+      this.$refs.view.style.width = `${width}px`
     },
     /**
      * 控制操作容器偏移度
      */
     changeControlLeft (event) {
       const poor = event.clientX - this.initMouseX
-      if (this.initContainerLeft + poor < 0 || this.initContainerLeft + poor > this.maxLeft) return
-      this.$refs.controlContainer.style.left = `${this.initContainerLeft + poor}px`
+      const n = this.initContainerLeft + poor
+      const left = n < 0 ? 0 : n > this.maxLeft ? this.maxLeft : n
+      if (!(this.$refs.view.offsetWidth === this.maxWidth || this.$refs.view.offsetWidth === this.minWidth)) {
+        this.$refs.controlContainer.style.left = left + 'px'
+      }
+    },
+    /**
+     * 拖动右边控制器
+     */
+    handleRight (event) {
+      const poor = this.initViewWidth + (event.clientX - this.initMouseX)
+      const width = poor > this.maxWidth ? this.maxWidth : poor < this.minWidth ? this.minWidth : poor
+      this.$refs.view.style.width = `${width}px`
+    },
+    /**
+     * 拖动中间控制器
+     */
+    handleView (event) {
+      const poor = event.clientX - this.initMouseX
+      const n = this.initContainerLeft + poor
+      let left = 0
+      if (n < 0) {
+        left = 0
+      } else if (n > this.maxLeft) {
+        left = this.maxLeft
+        console.log(this.maxLeft)
+      } else {
+        left = n
+      }
+      this.$refs.controlContainer.style.left = left + 'px'
     }
   }
 }
