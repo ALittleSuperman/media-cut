@@ -47,7 +47,8 @@ export default {
       initViewWidth: 0, // 截帧容器的初始宽度
       initContainerLeft: 0, // 操作容器的初始左偏移度
       maxLeft: 0, // 操作容器的最大左偏移度
-      thisX: 0 // 鼠标移动时的X坐标
+      thisX: 0, // 鼠标移动时的X坐标
+      timer: null
     }
   },
   mounted () {
@@ -96,6 +97,7 @@ export default {
       })
       document.querySelector('body').addEventListener('mouseup', () => {
         this.target = null
+        clearInterval(this.timer)
       })
     },
     /**
@@ -149,6 +151,7 @@ export default {
     handleView (event) {
       const poor = event.clientX - this.initMouseX
       const n = this.initContainerLeft + poor
+      this.handleFps(event)
       let left = 0
       if (n < 0) {
         left = 0
@@ -159,6 +162,22 @@ export default {
         left = n
       }
       this.$refs.controlContainer.style.left = left + 'px'
+    },
+    /**
+     * 改变帧图位置
+     */
+    handleFps (event) {
+      const poor = event.clientX - this.initMouseX
+      this.timer = setInterval(() => {
+        if (this.$refs.controlContainer.offsetLeft === 0 || this.$refs.controlContainer.offsetLeft === this.maxLeft) {
+          if (poor >= 0) {
+            const n = this.$refs.fps.offsetLeft - 1
+            this.$refs.fps.style.left = n + 'px'
+          } else if (poor < 0) {
+            this.$refs.fps.style.left = this.$refs.fps.offsetLeft + 1 + 'px'
+          }
+        }
+      }, 50)
     }
   }
 }
