@@ -6,8 +6,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "lib": "vue-cli-service build --target lib packages/index.js"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^3.8.3",
@@ -30,6 +29,7 @@
     "sass-loader": "^12.0.0",
     "scss": "^0.2.4",
     "video.js": "^7.19.2",
+    "videojs-vr": "^1.8.0",
     "vue-router": "^3.5.2",
     "vue-template-compiler": "^2.6.14"
   },

@@ -5,7 +5,7 @@ module.exports = defineConfig({
   pages: {
     index: {
       // 修改项目的入口文件
-      entry: 'examples/main.js',
+      entry: 'src/main.js',
       template: 'public/index.html',
       filename: 'index.html'
     }
