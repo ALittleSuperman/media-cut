@@ -42,7 +42,9 @@ export default {
         debug: true,
         forceCardboard: false
       }))
-      this.player.addChild('vrControl', this.player_vr)
+      this.$nextTick(() => {
+        this.player.addChild('vrControl', this.player_vr)
+      })
     }
   }
 }

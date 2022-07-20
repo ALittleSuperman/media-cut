@@ -5,8 +5,12 @@ class vrControl extends Component {
   constructor (player, options = {}) {
     super(player, options)
     this.timer = null
+    // this._initPosition = {
+    //   x: options.camera.position.x,
+    //   y: options.camera.position.y,
+    //   z: options.camera.position.z
+    // }
     this.options = options
-    console.log(typeof options.animation)
     if (typeof options.animation === 'function' && options.animationEnd === 'function') {
       this.animation = options.animation
       this.end = options.animationEnd
@@ -33,6 +37,8 @@ class vrControl extends Component {
       return 'right'
     } else if (className.includes('bottom')) {
       return 'bottom'
+    } else if (className.includes('black')) {
+      return 'focus'
     }
   }
 
@@ -114,6 +120,8 @@ class vrControl extends Component {
         _this.options.camera.position.y -= 0.1
       } else if (d === 'bottom') {
         _this.options.camera.position.y += 0.1
+      } else if (d === 'focus') {
+        _this.options.camera.position = _this._initPosition
       }
     }, 50)
   }
