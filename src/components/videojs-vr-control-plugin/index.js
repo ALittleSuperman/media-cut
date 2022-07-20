@@ -6,21 +6,27 @@ class vrControl extends Component {
     super(player, options)
     this.options = options
     const _this = this
-    this.on(this.el(), ['click', 'tap'], function (e) {
+    this.on('mousedown', function (e) {
       const controlType = this.computedDirection(e.target.className)
       _this.viewPoint(controlType)
+    })
+    this.on('mouseup', function (e) {
+      _this.end()
+    })
+    this.on('mouseleave', function (e) {
+      _this.end()
     })
   }
 
   computedDirection (className) {
     if (className.includes('left')) {
-      return 1
+      return 'left'
     } else if (className.includes('top')) {
-      return 2
+      return 'top'
     } else if (className.includes('right')) {
-      return 3
+      return 'right'
     } else if (className.includes('bottom')) {
-      return 4
+      return 'bottom'
     }
   }
 
@@ -81,16 +87,11 @@ class vrControl extends Component {
   }
 
   viewPoint (type) {
-    console.log(this.options, type, '参数')
-    if (type === 1) {
-      // TODO:向左改变视角
-    } else if (type === 2) {
-      // TODO:向上改变视角
-    } else if (type === 3) {
-      // TODO:向右改变视角
-    } else if (type === 4) {
-      // TODO:向下改变视角
-    }
+    console.log(type)
+  }
+
+  end () {
+    console.log('end')
   }
 }
 videoJs.registerComponent('vrControl', vrControl)
