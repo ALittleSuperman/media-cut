@@ -21,6 +21,8 @@
 import videojs from 'video.js'
 import 'videojs-vr'
 import 'video.js/dist/video-js.css'
+import '../components/videojs-vr-control-plugin/index'
+import '../components/videojs-vr-control-plugin/vr-control.scss'
 export default {
   name: 'video-vr-control',
   data () {
@@ -40,6 +42,7 @@ export default {
         debug: true,
         forceCardboard: false
       }))
+      this.player.addChild('vrControl', this.player_vr.options)
     }
   }
 }

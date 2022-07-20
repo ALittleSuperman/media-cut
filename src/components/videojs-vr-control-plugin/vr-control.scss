@@ -1,0 +1,66 @@
+[data-icon] {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+//[data-icon][size="33"]{
+//  width: 33px;
+//  height: 33px;
+//}
+[data-icon][size="22"]{
+  width: 22px;
+  height: 22px;
+}
+[data-icon="focus"] {
+  background-image: url("./assets/focus.svg");
+
+}
+[data-icon="top"] {
+  background-image: url("./assets/top.svg");
+}
+[data-icon="left"] {
+  background-image: url("./assets/left.svg");
+}
+[data-icon="right"] {
+  background-image: url("./assets/right.svg");
+}
+[data-icon="bottom"] {
+  background-image: url("./assets/bottom.svg");
+}
+
+.vjs-control-container:hover {
+  background-color: #FFFFFF;
+}
+.vjs-control-container {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255,.5);
+  .vjs-top-container,.vjs-center-container,.vjs-bottom-container {
+    width: 100%;
+    height: calc(100% / 3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .vjs-right-control,.vjs-left-control,.vjs-black-control  {
+    flex: 1;
+    height: 100%;
+  }
+  .vjs-bottom-control,.vjs-top-control {
+    width: calc(100% / 3);
+    height: 100%;
+  }
+}
