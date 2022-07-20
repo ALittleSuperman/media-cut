@@ -42,7 +42,7 @@ export default {
         debug: true,
         forceCardboard: false
       }))
-      this.player.addChild('vrControl', this.player_vr.options)
+      this.player.addChild('vrControl', this.player_vr)
     }
   }
 }

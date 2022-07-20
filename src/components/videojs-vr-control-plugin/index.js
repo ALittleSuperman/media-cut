@@ -4,7 +4,13 @@ const Component = videoJs.getComponent('Component')
 class vrControl extends Component {
   constructor (player, options = {}) {
     super(player, options)
+    this.timer = null
     this.options = options
+    console.log(typeof options.animation)
+    if (typeof options.animation === 'function' && options.animationEnd === 'function') {
+      this.animation = options.animation
+      this.end = options.animationEnd
+    }
     const _this = this
     this.on('mousedown', function (e) {
       const controlType = this.computedDirection(e.target.className)
@@ -87,11 +93,29 @@ class vrControl extends Component {
   }
 
   viewPoint (type) {
-    console.log(type)
+    this.animation(type)
   }
 
   end () {
-    console.log('end')
+    const _this = this
+    setTimeout(() => {
+      clearInterval(_this.timer)
+    }, 500)
+  }
+
+  animation (d) {
+    const _this = this
+    this.timer = setInterval(() => {
+      if (d === 'left') {
+        _this.options.camera.position.x += 0.1
+      } else if (d === 'right') {
+        _this.options.camera.position.x -= 0.1
+      } else if (d === 'top') {
+        _this.options.camera.position.y -= 0.1
+      } else if (d === 'bottom') {
+        _this.options.camera.position.y += 0.1
+      }
+    }, 50)
   }
 }
 videoJs.registerComponent('vrControl', vrControl)
