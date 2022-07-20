@@ -7,10 +7,6 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
-//[data-icon][size="33"]{
-//  width: 33px;
-//  height: 33px;
-//}
 [data-icon][size="22"]{
   width: 22px;
   height: 22px;
@@ -33,6 +29,7 @@
 }
 
 .vjs-control-container:hover {
+  transition: background .2s ease-in-out;
   background-color: #FFFFFF;
 }
 .vjs-control-container {
@@ -48,6 +45,7 @@
   flex-direction: column;
   cursor: pointer;
   background-color: rgba(255, 255, 255,.5);
+  transition: background .2s linear;
   .vjs-top-container,.vjs-center-container,.vjs-bottom-container {
     width: 100%;
     height: calc(100% / 3);

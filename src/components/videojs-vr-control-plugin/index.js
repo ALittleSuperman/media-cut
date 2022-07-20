@@ -81,7 +81,7 @@ class vrControl extends Component {
   }
 
   viewPoint (type) {
-    console.log(this.options, '参数')
+    console.log(this.options, type, '参数')
     if (type === 1) {
       // TODO:向左改变视角
     } else if (type === 2) {
